@@ -116,7 +116,7 @@ class Graph
 			{
 				int child = g[min].get(j).dest;
 				int prevWT = g[min].get(j).wt;
-				if(visited[child]==false && dist[min]!=INF && dist[child]>(prevWT + dist[min]))
+				if(visited[child]==false && dist[child]>(prevWT + dist[min]))
 					dist[child] = prevWT + dist[min];
 			}
 
