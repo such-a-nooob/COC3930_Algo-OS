@@ -94,18 +94,6 @@ class Graph
 		return minV;
 	}
 
-	// to find if there is an edge between two vertices
-	// returns 0 if no edge, if there exist an edge returns the WEIGHT of the edge 
-	int prevWT(int v, int x)
-	{
-		for(int i=0; i<g[v].size(); i++)
-		{
-			if(g[v].get(i).dest == x)
-				return g[v].get(i).wt;
-		}
-		return 0;
-	}
-
 	//COMPLEXITY O(V^2)
 	void dijkstra(int s)
 	{
@@ -119,16 +107,17 @@ class Graph
 		}
 
 		dist[s] = 0; // distance for source node of the graph is 0
-		// COMPLEXITY O(V x 4V) = O(V^2)
-		for(int i=0; i<vertices; i++)	// COMPLEXITY O(V)
+		// COMPLEXITY O(V x (2V + E)) = O(V^2)
+		for(int i=0; i<vertices-1; i++)	// COMPLEXITY O(V)
 		{
 			int min = minimumDistance(dist, visited);	// COMPLEXITY O(V)
 			visited[min] = true;
-			for(int j=0; j<vertices; j++)	// COMPLEXITY O(V)
+			for(int j=0; j<g[min].size(); j++)	// COMPLEXITY O(E)
 			{
-				int edge = prevWT(min,j);	// COMPLEXITY O(V)
-				if(visited[j]==false && edge!=0 && dist[min]!=INF && dist[j]>(edge + dist[min]))
-					dist[j] = edge + dist[min];
+				int child = g[min].get(j).dest;
+				int prevWT = g[min].get(j).wt;
+				if(visited[child]==false && dist[min]!=INF && dist[child]>(prevWT + dist[min]))
+					dist[child] = prevWT + dist[min];
 			}
 
 			System.out.println("\n\nMIN = "+min);
