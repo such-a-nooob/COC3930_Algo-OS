@@ -1,3 +1,14 @@
+/*
+
+Write a program in C++ for Breadth First Search (BFS) and Depth First Search (DFS). You need to show all intermediate steps.
+Reference: Introduction to Algorithms by Cormen, Lieserson, and Rivest.
+
+Name : Muniba Rahman
+Faculty no. : 20COB275
+Sr no. : A2CO-36
+
+*/
+
 #include<iostream>
 #include<list>
 
