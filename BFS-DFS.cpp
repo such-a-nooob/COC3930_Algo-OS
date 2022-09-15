@@ -66,13 +66,11 @@ public:
 	}
 
 	//Breadth First Search implementation
-	bool BFS(int source = 0, int key = -1)
+	void BFS(int source , bool *visited)
 	{
 		list<int> q;	//Queue for BFS implementation
-		bool *visited = new bool[vertices];	//An array to keep track of the visited nodes
-		for(int i=0; i<vertices; i++)
-			visited[i] = false;	//mark all nodes of the graph - unvisited
-
+		
+		cout<<"\n --- Source : "<<source;
 		q.push_back(source);	
 		while(!q.empty())
 		{
@@ -85,26 +83,21 @@ public:
 			q.pop_front();	//pop the node out of the queue
 			visited[node] = true;	//mark the poped node visited
 			cout<<"\n Node traversed ---> [ "<<node<<" ]";
-			if(key != -1)	//if it's searching
-				if(node == key)	//check if the visited element matches with the key
-					return true;
 
 			for(auto i = g[node].begin(); i != g[node].end(); i++)	//explore the visited node
 				if(!visited[*i] && !(contains(q, *i)))	//find elements that are unvisited and are not in the queue
 					q.push_back(*i);	//add the elements to the queue
 		}
-		return false;
 	}
 
 	//Depth First Search implementation
-	bool DFS(int source, int key = -1)
+	void DFS(int source , bool *visited)
 	{
 		list<int> s;	//Stack for DFS implementation
-		bool *visited = new bool[vertices];	//An array to keep track of the visited nodes
-		for(int i=0; i<vertices; i++)
-			visited[i] = false;	//mark all nodes of the graph - unvisited
-
+		
+		cout<<"\n --- Source : "<<source;
 		s.push_back(source);
+		visited[source]=true;
 		while(!s.empty())
 		{
 			//printing the stack to show the intermediate steps
@@ -112,27 +105,20 @@ public:
 			for(auto i = s.begin(); i != s.end(); i++)
 				cout<<*i<<"\t";
 
-			int c = 0;	//to count the number of elements pushed into the stack
 			int top = s.back();	//fetching the stack top (Stack follows LIFO)
+			s.pop_back();	//pop the visited node out of the stack
+			visited[top] = true;	//mark the top node of the stack as visited
+			cout<<"\n Node traversed ---> [ "<<top<<" ]";
+				
 			for(auto i = g[top].begin(); i != g[top].end(); i++)	//explore the top node of the stack
 			{
 				if(!visited[*i] && !(contains(s, *i)))	//find elements that are unvisited and are not in the stack
 				{
 					s.push_back(*i);	//add the elements to the stack
-					c++;
+					visited[*i]=true;
 				}
 			}
-			if(c == 0)	//if no elements are entered in the stack
-			{
-				visited[top] = true;	//mark the top node of the stack as visited
-				cout<<"\n Node traversed ---> [ "<<top<<" ]";
-				if(key != -1)	//if it's searching
-					if(top == key)	//check if the visited element matches with the key
-						return true;
-				s.pop_back();	//pop the visited node out of the stack
-			}
 		}
-		return false;
 	}
 };
 
@@ -155,46 +141,21 @@ int main()
 	G.createGraph(d);
 	G.printGraph();
 
-	int repeat;
-	do
-	{
-	int ch;
-	cout<<"\n Traversal (0) or Search (1) ?\t";
-	cin>>ch;
-	if(ch == 1)	//Searching
-	{
-		int key;
-		cout<<"\n Enter the key to be searched :\t";
-		cin>>key;
-		cout<<"\nBreadth First Search :\n";
-		if(G.BFS(0, key))
-			cout<<"\n Key "<<key<<" found!";
-		else
-			cout<<"\n Key "<<key<<" not found!";
-		cout<<"\n\nDepth First Search :\n";
-		if(G.DFS(0, key))
-			cout<<"\n Key "<<key<<" found!";
-		else
-			cout<<"\n Key "<<key<<" not found!";
-	}
-	else if(ch == 0)	//Traversal
-	{
-		int s;
-		cout<<"\n Enter the source node : ";
-		cin>>s;
-		cout<<"\nBreadth First Traversal :\n";
-		G.BFS(s);
-		cout<<"\n\nDepth First Traversal :\n";
-		G.DFS(s);
-	}
-	else 	//Invalid input
-	{
-		cout<<"\n Invalid input!";
-		exit(0);
-	}
-	cout<<"\n AGAIN? (Press 0 to Exit)\t";
-	cin>>repeat;
-	}while(repeat != 0);
+	bool *visited = new bool[n];	//An array to keep track of the visited nodes
+	
+	cout<<"\nBreadth First Traversal :\n";
+	for(int i=0; i<n; i++)
+		visited[i] = false;	//mark all nodes of the graph - unvisited
+	for(int i=0; i<n; i++)
+		if(visited[i] == false)
+			G.BFS(i,visited);
+
+	cout<<"\n\nDepth First Traversal :\n";
+	for(int i=0; i<n; i++)
+		visited[i] = false;	//mark all nodes of the graph - unvisited
+	for(int i=0; i<n; i++)
+		if(visited[i] == false)
+			G.DFS(i,visited);
 
 	return 0;
 }
