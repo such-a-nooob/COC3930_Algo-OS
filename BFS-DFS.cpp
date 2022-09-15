@@ -38,8 +38,12 @@ public:
 			cin>>s>>d;
 			if(s == -1 || d == -1) break;
 			g[s].push_back(d);
+			g[s].sort();
 			if(directed == 0)
+			{
 				g[d].push_back(s);
+				g[d].sort();
+			}
 		}
 	}
 
@@ -110,6 +114,7 @@ public:
 			visited[top] = true;	//mark the top node of the stack as visited
 			cout<<"\n Node traversed ---> [ "<<top<<" ]";
 				
+			g[top].reverse();
 			for(auto i = g[top].begin(); i != g[top].end(); i++)	//explore the top node of the stack
 			{
 				if(!visited[*i] && !(contains(s, *i)))	//find elements that are unvisited and are not in the stack
