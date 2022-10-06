@@ -113,6 +113,7 @@ class Graph
 					if(i == sink)
 					{
 						parent[i] = popped;
+						printPath(g, parent, source, sink);
 						return true;
 					}
 
@@ -143,7 +144,6 @@ class Graph
 
 		while(findPath(tempG, source, sink, parent) == true)	//repeat until sink can not be visited
 		{
-			printPath(tempG, parent, source, sink);
 			int minCap = INF;
 
 			//trace the path from sink to source
