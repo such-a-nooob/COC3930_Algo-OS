@@ -13,7 +13,7 @@ import java.util.*;
 
 class BankersAlgo 
 {
-  int need[][], allocate[][], max[][], avail[];
+  int need[][], allocate[][], max[][], avail[], availNow[];
   int np, nr;
   
   BankersAlgo(int np, int nr)
@@ -24,6 +24,7 @@ class BankersAlgo
     max= new int[np][nr];
     allocate = new int[np][nr];
     avail = new int[nr];
+    availNow = new int[nr];
   }
   
   void inputData()
@@ -42,25 +43,55 @@ class BankersAlgo
         max[i][j]=sc.nextInt(); //max matrix
       
     System.out.println("\nEnter the total available resources : ");
-    for (int j=0; j<nr; j++)
-      avail[j]=sc.nextInt(); //available processes
+    for (int i=0; i<nr; i++)
+    {
+      avail[i]=sc.nextInt(); //available processes
+      availNow[i] = avail[i];
+    }
+  }
+
+  void printTable(int[][] matrix)
+  {
+    System.out.print("\nProcesses\t");
+    for(int i=0; i<nr; i++)
+      System.out.print("R"+(i+1)+"\t");
+    for(int i=0; i<np; i++)
+    {
+      System.out.print("\n  P"+(i+1)+"\t\t");
+      for(int j=0; j<nr; j++)
+        System.out.print(matrix[i][j]+"\t");
+    }
+  }
+
+  void printData()
+  {
+    System.out.print("\nCURRENTLY ALLOCATED RESOURCES");
+    printTable(allocate);
+    System.out.print("\n\nMAXIMUN DEMANDS");
+    printTable(max);
   }
   
-  int [][] calc_need()
+  void calcNeed()
   {
     for(int i=0; i<np; i++)
       for(int j=0; j<nr; j++)  //calculating need matrix
         need[i][j]=max[i][j]-allocate[i][j];
-      
-    return need;
   }
-      
+    
+  void calcAvailable()
+  {
+    for(int i=0; i<nr; i++)
+    {
+      for(int j=0; j<np; j++)
+        availNow[i] = availNow[i] - allocate[j][i];
+    }
+  }
               
-  boolean check(int i)
+  boolean checkResource(int[] available, int i)
   {
     //checking if all resources for ith process can be allocated
     for (int j=0; j<nr; j++)
-      if(avail[j]<need[i][j])
+      if(available[j]<need[i][j])
         return false;
       
     return true;
@@ -68,36 +99,64 @@ class BankersAlgo
   
   void isSafe()
   {
-    calc_need();
+    calcNeed();
+    System.out.print("\n\nRESOURCES NEEDED");
+    printTable(need);
+
+    calcAvailable();
+    System.out.println("\n\nAVAILABLE RESOURCES");
+    for(int i=0; i<nr; i++)
+      System.out.print("R"+(i+1)+"\t");
+    System.out.println();
+    for(int i=0; i<nr; i++)
+      System.out.print(availNow[i]+"\t");
+
     boolean done[] = new boolean[np];
+    int safeSequence[] = new int[np];
+    int ns=0;
     for(int i=0; i<np; i++)
       done[i] = false;
-    int j=0;
+    int f=0;
      
-    System.out.print("\nSafe sequence : ");
-    while(j<np)
+    while(f<np)
     { //untill all the processes are allocated
       boolean allocated = false;
       for(int i=0; i<np; i++)
       {
-        if(!done[i] && check(i))
+        if(!done[i] && checkResource(availNow,i))
         { //trying to allocate
-          for (int k=0; k<nr; k++)
-            avail[k]=avail[k]-need[i][k]+max[i][k];
+          for (int j=0; j<nr; j++)
+            availNow[j] = availNow[j] + allocate[i][j];
         
-          System.out.print(i+1+" ");
+          System.out.println("\n\nResourses allocated to : P"+(i+1));
+          System.out.println("Available Resources :");
+          for(int k=0; k<nr; k++)
+            System.out.print("R"+(k+1)+"\t");
+          System.out.println();
+          for(int k=0; k<nr; k++)
+            System.out.print(availNow[k]+"\t");
+          
+          safeSequence[ns++] = i+1;
           allocated = true;
           done[i] = true;
-          j++;
+          f++;
         }
       }
       if(!allocated) break;  //no allocation
     }
       
-    if(j==np) //if all processes are allocated
-      System.out.println("\nSafely Allocated!");
+    if(f==np) //if all processes are allocated
+    {
+      System.out.println("\n\nAll processes are SAFELY Allocated!");
+
+      System.out.print("Safe sequence : ");
+      int i;
+      for(i=0; i<np-1; i++)
+        System.out.print("P"+safeSequence[i]+" -> ");
+      System.out.println("P"+safeSequence[i]);
+    }
     else
-      System.out.println("\nAll processes can not be allocated safely!");   
+      System.out.println("\n\nAll processes CAN NOT be allocated safely!");   
   }
 }
   
@@ -113,6 +172,7 @@ class Lab7
 
     BankersAlgo B = new BankersAlgo(processes, resources);
     B.inputData();
+    B.printData();
     B.isSafe();
   }
 }
