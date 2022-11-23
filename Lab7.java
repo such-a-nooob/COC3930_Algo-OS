@@ -5,7 +5,7 @@ Reference: Operating Systems by Silberchaltz and Galvin
 
 Name : Muniba Rahman
 Faculty no. : 20COB275
-Sr no. : A2CO-36
+Sr no. : A3CO-36
 
 */
 
@@ -35,17 +35,17 @@ class BankersAlgo
     System.out.println("\nAllocated resources ( "+np+" x "+nr+" )");
     for(int i=0; i<np; i++)
       for(int j=0;j<nr; j++)
-        allocate[i][j]=sc.nextInt();  //allocate matrix
+        allocate[i][j]=sc.nextInt();  
       
-    System.out.println("\nMaximum need of processes ( "+np+" x "+nr+" )");
+    System.out.println("\nMaximum demands of processes ( "+np+" x "+nr+" )");
     for(int i=0; i<np; i++)
       for(int j =0; j<nr; j++)
-        max[i][j]=sc.nextInt(); //max matrix
+        max[i][j]=sc.nextInt(); 
       
     System.out.println("\nEnter the total available resources : ");
     for (int i=0; i<nr; i++)
     {
-      avail[i]=sc.nextInt(); //available processes
+      avail[i]=sc.nextInt(); 
       availNow[i] = avail[i];
     }
   }
@@ -123,8 +123,8 @@ class BankersAlgo
       boolean allocated = false;
       for(int i=0; i<np; i++)
       {
-        if(!done[i] && checkResource(availNow,i))
-        { //trying to allocate
+        if(done[i]==false && checkResource(availNow,i))
+        { 
           for (int j=0; j<nr; j++)
             availNow[j] = availNow[j] + allocate[i][j];
         
@@ -158,6 +158,56 @@ class BankersAlgo
     else
       System.out.println("\n\nAll processes CAN NOT be allocated safely!");   
   }
+
+  void moreResourses(int p)
+  {
+    Scanner sc = new Scanner(System.in);
+    int[] request = new int[nr];
+    int a=0, b=0, f;
+    System.out.print("Enter the number of resources required : ");
+    for (int i=0; i<nr; i++)
+      request[i]= sc.nextInt();
+    
+    f=0;
+    for (int i=0; i<nr; i++)
+      if(request[i] <= need[p][i])
+        f++;
+    
+    if(f<nr)
+    {
+       System.out.println("\nRequest denied!\nProcess has requested the MORE than the maximum demands!!");
+       return;
+    }  
+    //else a=1;
+
+    f=0;
+    for (int i=0; i<nr; i++)
+      if(request[i] <= avail[i])
+        f++;
+    
+    if(f<nr)
+    {
+      System.out.println("\nRequest denied!\nProcess has request MORE resources than available!!");
+      return;
+    }  
+    //else b=1;
+
+    //if(a==1 && b==1)
+    //{
+            
+      for (int i=0; i<nr; i++)
+      {
+        avail[i]=avail[i]-request[i];
+        allocate[p][i]=allocate[p][i]+request[i];
+        need[p][i]=need[p][i]-request[i];
+      }
+
+    //}
+
+    printData();
+    isSafe();
+
+  }
 }
   
 class Lab7 
@@ -174,5 +224,13 @@ class Lab7
     B.inputData();
     B.printData();
     B.isSafe();
+
+    System.out.print("\n\nRequest more resources? [ Yes(1)/ No(0) ]  ");
+    int ch = sc.nextInt();
+    if(ch==1)
+    {
+      System.out.print("Enter the Process ID : ");
+      B.moreResourses(sc.nextInt());
+    }
   }
 }
