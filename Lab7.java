@@ -178,7 +178,6 @@ class BankersAlgo
        System.out.println("\nRequest denied!\nProcess has requested the MORE than the maximum demands!!");
        return;
     }  
-    //else a=1;
 
     f=0;
     for (int i=0; i<nr; i++)
@@ -190,19 +189,13 @@ class BankersAlgo
       System.out.println("\nRequest denied!\nProcess has request MORE resources than available!!");
       return;
     }  
-    //else b=1;
-
-    //if(a==1 && b==1)
-    //{
             
-      for (int i=0; i<nr; i++)
-      {
-        avail[i]=avail[i]-request[i];
-        allocate[p][i]=allocate[p][i]+request[i];
-        need[p][i]=need[p][i]-request[i];
-      }
-
-    //}
+    for (int i=0; i<nr; i++)
+    {
+      avail[i]=avail[i]-request[i];
+      allocate[p][i]=allocate[p][i]+request[i];
+      need[p][i]=need[p][i]-request[i];
+    }
 
     printData();
     isSafe();
