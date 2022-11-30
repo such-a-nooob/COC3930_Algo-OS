@@ -1,3 +1,14 @@
+/*
+
+Write a program to implement Minimum Spanning Tree using Prim's Algorithm in Java. Show all intermediate steps. Also, analyze the complexity of the algorithm. 
+Reference: Introduction to Algorithms by Cormen, Lieserson, and Rivest.
+
+Name : Muniba Rahman
+Faculty no. : 20COB275
+Sr no. : A2CO-36
+
+*/
+
 import java.util.*;
 
 class LNode
@@ -108,22 +119,28 @@ class Graph
 		int parent[] = new int[vertices];	// to store the parent of each node in MST
 
 		// costs for all vertices are set to infinity and root to zero
-		for(int i=0; i<vertices; i++)
-			costs[i] = INF;
-		costs[root] = 0;
-		
-		// MST is empty, mark all vertices as NOT included
-		for(int i=0; i<vertices; i++)
-			included[i] = false;
-
-		// set the parent node of root to -1
-		parent[root] = -1;
-		
+		// initially MST is empty, mark all vertices as NOT included
+		// set the parent node of nodes to -1
 		for(int i=0; i<vertices; i++)
 		{
+			if(i == root)
+				costs[i] = 0;
+			else
+				costs[i] = INF;
+			included[i] = false;
+			parent[i] = -1;
+		}
+		
+		System.out.println("\nCosts :");
+		for(int i=0; i<vertices; i++)
+		{
+			for(int x=0; x<vertices; x++)
+				if(!included[x])
+					System.out.print(x+" ["+costs[x]+"]\t");
+
 			int node = minCost(costs, included);	// find the node with minimum cost associated 
-			System.out.println(node);
-			included[node] = true;	// include that node in MST
+			System.out.println("\nExtracted minimum cost node : "+node);
+        	included[node] = true;	// include that node in MST
 			
 			for(int j=0; j<g[node].size(); j++)	//explore the node
 			{
@@ -141,10 +158,6 @@ class Graph
 		Boolean connected = true;
 		for(int i=0; i<vertices; i++)
 		{
-			for(int x=0; x<vertices; x++)
-				System.out.print(parent[x]+"\t");
-			System.out.println();
-
 			if(costs[i] == INF)
 			{
 				connected = false;
