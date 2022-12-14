@@ -1,3 +1,16 @@
+/*
+
+Given the number of frames and a reference string. Write a program
+to implement page replacement algorithms e.g. FIFO, LRU, and OPT.
+
+Reference: Operating Systems by Silberchatz and Galvin.
+
+Name : Muniba Rahman
+Faculty no. : 20COB275
+Sr no. : A3CO-36
+
+*/
+
 import java.util.*;
 
 class PageReplacement
