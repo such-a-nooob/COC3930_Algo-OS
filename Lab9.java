@@ -36,19 +36,15 @@ class PageReplacement
 	        refString[i] = sc.nextInt();
 	}
 
-	void initialize()
-	{
-		pfaults = 0;
-    	hits = 0;
-		for(int i=0; i<1000; i++)
-    	    pages[i] = false;
-	}
-
 	void prFIFO()
 	{
 		System.out.println("\n\n---FIFO PAGE REPLACEMENT ALGORITHM---");
 		LinkedList<Integer> frames = new LinkedList();
-		initialize();
+		pfaults = 0;
+    	hits = 0;
+    	for(int i=0; i<1000; i++)
+    	    pages[i] = false;
+
     	for (int i=0; i<n; i++)
 	    {
 	        System.out.println("\n--> For page : " + refString[i]);
@@ -81,7 +77,8 @@ class PageReplacement
 	{
 		System.out.println("\n\n---OPTIMAL PAGE REPLACEMENT ALGORITHM---");
 	    LinkedList<Integer> frames = new LinkedList();
-	    initialize();
+	    pfaults = 0;
+    	hits = 0;
     	for (int i = 0; i < n; i++)
 	    {
 	        System.out.println("\n--> For page : " + refString[i]);
@@ -142,64 +139,62 @@ class PageReplacement
 
 	void prLRU()
 	{
-	    System.out.println("\n\n---LRU PAGE REPLACEMENT ALGORITHM---");
-	    int[] frames = new int[nf];
-	    initialize();
-	    for (int i = 0; i < nf; i++)
-	    {
-	        frames[i] = -1;
-	    }
-	    
-	    int[] time = new int[1000];
-	    for (int i = 0; i < 1000; i++)
-	    {
-	        time[i] = -1;
-	    }
-	    int index = 0;
-	    for (int i = 0; i < n; i++)
+		System.out.println("\n\n---LRU PAGE REPLACEMENT ALGORITHM---");
+	    LinkedList<Integer> frames = new LinkedList();
+	    pfaults = 0;
+    	hits = 0;
+    	for (int i = 0; i < n; i++)
 	    {
 	        System.out.println("\n--> For page : " + refString[i]);
-	        if (pages[refString[i]] == true)
+	        int k;
+	        for (k = 0; k < frames.size(); k++)
 	        {
-	            System.out.println("HIT!\n " + refString[i] + " already present in memory!");
-	            hits++;
+	            if (frames.get(k) == refString[i])
+	            {
+	            	System.out.println("HIT!\n " + refString[i] + " already present in memory!");
+	                break;
+	            }
 	        }
-	        else
+	        if (k == frames.size())
 	        {
 	            System.out.println("PAGE FAULT!\n Page " + refString[i] + " not present in memory!");
-	            if (frames[nf - 1] == -1)
-	                frames[index] = refString[i];
+	            if (frames.size() < nf)
+	            {
+	                frames.add(refString[i]);
+	                System.out.println("Inserted page : " + refString[i]);
+	            }
+
 	            else
 	            {
-	                int lru = 1000;
-	                for (int j = 0; j < 1000; j++)
+	                int index = i - 1;
+	                int res = -1, farthest = index, last = index, pos = -1;
+	                for (int l = 0; l < frames.size(); l++)
 	                {
-	                    if (time[j] < lru && time[j] >= 0)
+	                    int j;
+	                    for (j = 0; j <= index; j++)
 	                    {
-	                        lru = time[j];
-	                        index = j;
+	                        if (frames.get(l) == refString[j])
+	                        {
+	                            last = j;
+	                            pos = l;
+	                        }
+	                    }
+	                    if(last < farthest)
+	                    {
+	                    	farthest = last;
+	                    	res = pos;
 	                    }
 	                }
-	                for (int j = 0; j < nf; j++)
-	                {
-	                    if (frames[j] == index)
-	                    {
-	                        System.out.println("Removed page : " + frames[j]);
-	                        pages[frames[j]] = false;
-	                        time[frames[j]] = -1;
-	                        frames[j] = refString[i];
-	                    }
-	                }
+	                System.out.println("Removed page : " + frames.get(res));
+	                System.out.println("Inserted page : " + refString[i]);
+	                frames.remove(res);
+	                frames.add(res, refString[i]);
 	            }
-	            index = (index + 1) % nf;
-	            System.out.println("Inserted page : " + refString[i]);
-	            pages[refString[i]] = true;
 	            pfaults++;
 	        }
-	        time[refString[i]] = i;
 	    }
-	    System.out.println("\nThe total number of hits occurred = " + hits);
-	    System.out.println("The total number of page faults occurred = " + pfaults);
+	    System.out.println("\nThe total number of hits occurred = " + (n - pfaults));
+		System.out.println("The total number of page faults occurred = " + pfaults);
 	}
 };
 
